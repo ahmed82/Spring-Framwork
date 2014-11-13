@@ -56,7 +56,7 @@ public class OrderDaoImpl implements OrderDao {
 			}
 		}
 		System.out.println("order dao saved " + order.getCustomerName());
-	}
+	}//addOrder
 
 	private Connection getConnection() {
 		try {
