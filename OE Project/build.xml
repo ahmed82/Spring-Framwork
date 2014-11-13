@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<project name="oe" basedir="." default="deploy.war">
+	<property file="build.properties"/>
+
+	<property name="src.dir" value="src"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="etc.dir" value="etc"/>
+	<property name="jsp.dir" value="jsp"/>
+	<property name="classes.dir" value="classes"/>
+	<property name="buildwar.dir" value="buildwar"/>
+	<property name="warroot.dir" value="${buildwar.dir}/warroot"/>
+	<property name="wardist.dir" value="${buildwar.dir}/wardist"/>
+	<property name="name" value="oe"/>
+
+	<path id="master.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${tomcat.home}/common/lib">
+			<include name="servlet-api.jar"/>
+		</fileset>
+		<pathelement path="${classes.dir}"/>
+	</path>
+
+	<target name="clean"
+		description="Removes directories created by build process.">
+	   <delete dir="${buildwar.dir}"/>
+	   <delete dir="${classes.dir}"/>
+	</target>
+	
+	<target name="compile" description="Compile main source tree java files">
+		<mkdir dir="${classes.dir}"/>
+		<javac destdir="${classes.dir}" 
+			   deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master.classpath"/>
+		</javac>
+	</target>
+
+	<target name="prepare.war" depends="compile" description="Build WAR file">
+		<mkdir dir="${buildwar.dir}"/>
+		<mkdir dir="${wardist.dir}"/>
+		<mkdir dir="${warroot.dir}"/>
+		<mkdir dir="${warroot.dir}/WEB-INF"/>
+		<mkdir dir="${warroot.dir}/WEB-INF/classes"/>
+		<mkdir dir="${warroot.dir}/WEB-INF/lib"/>
+		<mkdir dir="${warroot.dir}/WEB-INF/jsp"/>
+		<copy todir="${warroot.dir}/WEB-INF/classes" preservelastmodified="true">
+			<fileset dir="${classes.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${warroot.dir}/WEB-INF/jsp" preservelastmodified="true">
+			<fileset dir="${jsp.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+			<fileset dir="${etc.dir}" includes="spring-beans.xml"/>
+		</copy>
+	</target>
+
+	<target name="build.war" depends="prepare.war" description="Build WAR file">
+		<war destfile="${wardist.dir}/${name}.war" webxml="${etc.dir}/web.xml">
+			<fileset dir="${warroot.dir}">
+				<include name="**/*.*"/>
+			</fileset>
+		</war>
+	</target>
+	
+	<target name="deploy.war" depends="build.war">
+		<copy todir="${deploy.path}" preservelastmodified="true">
+			<fileset dir="${wardist.dir}">
+				<include name="*.war"/>
+			</fileset>
+		</copy>
+	</target>
+
+</project>
