@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+			"http://www.springframework.org/dtd/spring-beans.dtd">
+
+
+<bean id="orderService" class="com.simplesoft.oe.service.OrderServiceImpl"
+	autowire="byName">
+</bean>
+
+<bean id="orderDao" class="com.simplesoft.oe.dao.OrderDaoImpl">
+</bean>
+
+</beans>
